@@ -1,4 +1,5 @@
 import { UserModel } from './user.model.js';
+import type { PipelineStage } from 'mongoose';
 import type {
   AuthUser,
   PublicUser,
@@ -6,9 +7,18 @@ import type {
 } from './user.repository.js';
 import type { Role } from '../../shared/rbac/roles.js';
 import type { Pagination } from '../../shared/pagination/pagination.js';
-import type { ManagedUserInput, ManagedUserUpdate } from './user.repository.js';
+import type {
+  InterestGroup,
+  ManagedUserInput,
+  ManagedUserUpdate,
+} from './user.repository.js';
 
 const publicProjection = '_id name email role interests';
+
+type InterestAggregation = {
+  items: InterestGroup[];
+  total: Array<{ value: number }>;
+};
 
 function toPublicUser(user: {
   _id: { toString(): string };
@@ -100,5 +110,57 @@ export class MongooseUserRepository implements UserRepository {
   async deleteById(id: string): Promise<boolean> {
     const result = await UserModel.deleteOne({ _id: id });
     return result.deletedCount === 1;
+  }
+
+  async groupByInterests(input: {
+    interest?: string;
+    page: number;
+    limit: number;
+    usersPerGroup: number;
+  }): Promise<{ items: InterestGroup[]; total: number }> {
+    const pipeline: PipelineStage[] = [
+      ...(input.interest ? [{ $match: { interests: input.interest } }] : []),
+      { $project: { name: 1, email: 1, interests: 1 } },
+      { $unwind: '$interests' },
+      ...(input.interest ? [{ $match: { interests: input.interest } }] : []),
+      {
+        $group: {
+          _id: '$interests',
+          count: { $sum: 1 },
+          users: {
+            $topN: {
+              output: { _id: '$_id', name: '$name', email: '$email' },
+              sortBy: { name: 1, _id: 1 },
+              n: input.usersPerGroup,
+            },
+          },
+        },
+      },
+      { $sort: { _id: 1 } },
+      {
+        $facet: {
+          items: [
+            { $skip: (input.page - 1) * input.limit },
+            { $limit: input.limit },
+            {
+              $project: {
+                _id: 0,
+                interest: '$_id',
+                count: 1,
+                users: 1,
+              },
+            },
+          ],
+          total: [{ $count: 'value' }],
+        },
+      },
+    ];
+
+    const [result] =
+      await UserModel.aggregate<InterestAggregation>(pipeline).exec();
+    return {
+      items: result?.items ?? [],
+      total: result?.total[0]?.value ?? 0,
+    };
   }
 }

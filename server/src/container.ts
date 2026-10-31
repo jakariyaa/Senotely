@@ -8,6 +8,7 @@ import { MongooseNoteRepository } from './modules/notes/note.mongoose.repository
 import { NoteService } from './modules/notes/note.service.js';
 import { MongoosePostRepository } from './modules/posts/post.mongoose.repository.js';
 import { UserService } from './modules/users/user.service.js';
+import { PostService } from './modules/posts/post.service.js';
 
 const users = new MongooseUserRepository();
 const passwords = new BcryptHasher();
@@ -21,6 +22,7 @@ export const container = {
   tokens,
   noteService: new NoteService(notes),
   userService: new UserService(users, passwords, notes, posts),
+  postService: new PostService(posts),
 };
 
 export type Container = {
@@ -29,4 +31,5 @@ export type Container = {
   tokens: TokenService;
   noteService: NoteService;
   userService: UserService;
+  postService: PostService;
 };

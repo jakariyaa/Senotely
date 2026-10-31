@@ -1,6 +1,10 @@
 import { createServer } from 'node:http';
 import { createApp } from './app.js';
-import { connectDatabase, disconnectDatabase } from './config/db.js';
+import {
+  assertMongoVersion,
+  connectDatabase,
+  disconnectDatabase,
+} from './config/db.js';
 import { container } from './container.js';
 import { env } from './config/env.js';
 import { NoteModel } from './modules/notes/note.model.js';
@@ -11,6 +15,7 @@ const server = createServer(createApp(container));
 
 try {
   await connectDatabase();
+  await assertMongoVersion();
   await Promise.all([UserModel.init(), NoteModel.init(), PostModel.init()]);
   server.listen(env.PORT, () => {
     console.info(`API listening on port ${env.PORT}`);

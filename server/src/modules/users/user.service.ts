@@ -78,6 +78,16 @@ export class UserService {
       throw new NotFoundError('User not found');
     }
   }
+
+  groupByInterests(input: { interest?: string; page: number; limit: number }) {
+    const interest = input.interest?.trim().toLowerCase();
+    return this.users.groupByInterests({
+      ...(interest ? { interest } : {}),
+      page: input.page,
+      limit: input.limit,
+      usersPerGroup: 20,
+    });
+  }
 }
 
 function isDuplicateKeyError(error: unknown): boolean {

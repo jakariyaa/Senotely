@@ -7,7 +7,7 @@ import {
   buildMeta,
   parsePagination,
 } from '../../shared/pagination/pagination.js';
-import { userIdSchema } from './user.schemas.js';
+import { interestGroupsQuerySchema, userIdSchema } from './user.schemas.js';
 import type { UserService } from './user.service.js';
 
 export function userAdminController(service: UserService) {
@@ -47,5 +47,21 @@ export function userAdminController(service: UserService) {
     response.status(204).end();
   };
 
-  return { list, create, get, update, remove };
+  const groupByInterests: RequestHandler = async (request, response) => {
+    const parsed = interestGroupsQuerySchema.safeParse(request.query);
+    if (!parsed.success)
+      throw new ValidationError('Invalid interest group query');
+    const pagination = parsePagination(parsed.data);
+    const result = await service.groupByInterests({
+      ...(parsed.data.interest ? { interest: parsed.data.interest } : {}),
+      page: pagination.page,
+      limit: pagination.limit,
+    });
+    response.json({
+      data: result.items,
+      meta: buildMeta(result.total, pagination.page, pagination.limit),
+    });
+  };
+
+  return { list, create, get, update, remove, groupByInterests };
 }

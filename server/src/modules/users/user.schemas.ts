@@ -38,6 +38,12 @@ export const updateManagedUserSchema = z
 
 export const userIdSchema = z.string().regex(/^[\da-f]{24}$/i);
 
+export const interestGroupsQuerySchema = z.object({
+  page: z.string().regex(/^\d+$/).optional(),
+  limit: z.string().regex(/^\d+$/).optional(),
+  interest: z.string().trim().toLowerCase().min(1).max(30).optional(),
+});
+
 export type CreateManagedUserInput = z.infer<typeof createManagedUserSchema>;
 export type UpdateManagedUserInput = {
   name?: string;
@@ -46,3 +52,4 @@ export type UpdateManagedUserInput = {
   interests?: string[];
   password?: string;
 };
+export type InterestGroupsQuery = z.infer<typeof interestGroupsQuerySchema>;

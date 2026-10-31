@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "pnpm --filter @notes/server typecheck"
+    "typecheck": "pnpm --filter @notes/server typecheck",
+    "test": "pnpm --filter @notes/server test"
   },
   "devDependencies": {
     "eslint": "^9.39.0",

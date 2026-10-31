@@ -12,15 +12,19 @@ import {
   updateManagedUserSchema,
 } from './user.schemas.js';
 import type { UserService } from './user.service.js';
+import type { PostService } from '../posts/post.service.js';
+import { postController } from '../posts/post.controller.js';
 
 export function userRoutes(
   service: AuthService,
   tokens: TokenService,
   users: UserRepository,
   userService: UserService,
+  postService: PostService,
 ): Router {
   const router = Router();
   router.get('/me', authenticate(tokens, users), userController(service).me);
+  router.get('/:id/posts', postController(postService).findByAuthor);
   router.use(authenticate(tokens, users));
 
   const admin = userAdminController(userService);
@@ -30,6 +34,11 @@ export function userRoutes(
     authorize('user:create'),
     validateBody(createManagedUserSchema),
     admin.create,
+  );
+  router.get(
+    '/by-interests',
+    authorize('user:group-by-interest'),
+    admin.groupByInterests,
   );
   router.get('/:id', authorize('user:read'), admin.get);
   router.patch(

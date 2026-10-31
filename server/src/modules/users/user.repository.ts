@@ -16,6 +16,11 @@ export type ManagedUserInput = Pick<
   'name' | 'email' | 'passwordHash' | 'role' | 'interests'
 >;
 export type ManagedUserUpdate = Partial<ManagedUserInput>;
+export type InterestGroup = {
+  interest: string;
+  count: number;
+  users: Array<{ _id: string; name: string; email: string }>;
+};
 
 export interface UserRepository {
   findAuthByEmail(email: string): Promise<AuthUser | null>;
@@ -28,4 +33,10 @@ export interface UserRepository {
   list(pagination: Pagination): Promise<{ data: PublicUser[]; total: number }>;
   updateById(id: string, input: ManagedUserUpdate): Promise<PublicUser | null>;
   deleteById(id: string): Promise<boolean>;
+  groupByInterests(input: {
+    interest?: string;
+    page: number;
+    limit: number;
+    usersPerGroup: number;
+  }): Promise<{ items: InterestGroup[]; total: number }>;
 }
