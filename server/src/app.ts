@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
 import { env } from './config/env.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
+import { adminNoteRoutes, noteRoutes } from './modules/notes/note.routes.js';
 import { userRoutes } from './modules/users/user.routes.js';
 import type { Container } from './container.js';
 import { logger } from './shared/logging/logger.js';
@@ -25,6 +26,14 @@ export function createApp(container: Container) {
   app.use(
     '/users',
     userRoutes(container.authService, container.tokens, container.users),
+  );
+  app.use(
+    '/notes',
+    noteRoutes(container.noteService, container.tokens, container.users),
+  );
+  app.use(
+    '/admin/notes',
+    adminNoteRoutes(container.noteService, container.tokens, container.users),
   );
   app.use((_request, response) => {
     response.status(404).json({
