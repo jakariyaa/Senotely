@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { api, requireToken } from '@/lib/api';
+import { api, requireToken, requireUser } from '@/lib/api';
 import type { Page, User } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -21,7 +21,10 @@ export default async function AdminUsersPage({
   searchParams: Search;
 }) {
   const page = pageNumber((await searchParams).page);
-  const token = await requireToken();
+  const [token, currentUser] = await Promise.all([
+    requireToken(),
+    requireUser(),
+  ]);
   const result = await api<Page<User>>(`/users?page=${page}&limit=${limit}`, {
     token,
   });
@@ -58,7 +61,11 @@ export default async function AdminUsersPage({
           <CardContent className="px-0">
             {result.data.length ? (
               result.data.map((user) => (
-                <ManagedUserRow key={user.id} user={user} />
+                <ManagedUserRow
+                  key={user.id}
+                  user={user}
+                  isCurrentUser={user.id === currentUser.id}
+                />
               ))
             ) : (
               <p className="py-8 text-center text-sm text-muted-foreground">

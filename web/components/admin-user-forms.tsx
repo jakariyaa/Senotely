@@ -68,7 +68,13 @@ export function CreateManagedUserForm() {
   );
 }
 
-export function ManagedUserRow({ user }: { user: User }) {
+export function ManagedUserRow({
+  user,
+  isCurrentUser,
+}: {
+  user: User;
+  isCurrentUser: boolean;
+}) {
   const update = updateManagedUser.bind(null, user.id);
   const remove = deleteManagedUser.bind(null, user.id);
   const [state, action, pending] = useActionState(update, {});
@@ -102,18 +108,20 @@ export function ManagedUserRow({ user }: { user: User }) {
               required
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor={`role-${user.id}`}>Role</Label>
-            <select
-              id={`role-${user.id}`}
-              name="role"
-              defaultValue={user.role}
-              className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
+          {!isCurrentUser && (
+            <div className="space-y-2">
+              <Label htmlFor={`role-${user.id}`}>Role</Label>
+              <select
+                id={`role-${user.id}`}
+                name="role"
+                defaultValue={user.role}
+                className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor={`interests-${user.id}`}>Interests</Label>
             <Input

@@ -2,7 +2,7 @@
 
 ## Development
 
-Requirements: Node.js 24+, pnpm, and Docker Compose.
+Requirements: Node.js 24+, pnpm, Docker Compose, and MongoDB 9.0 or newer (Compose uses 9.0.4).
 
 ```sh
 cp server/.env.example server/.env
