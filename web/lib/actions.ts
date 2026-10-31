@@ -196,7 +196,7 @@ export async function createPost(
   if (!idSchema.safeParse(profileId).success)
     return { error: true, message: 'Invalid profile.' };
   const user = await getCurrentUser();
-  if (!user || user.id !== profileId)
+  if (!user || user.id.toLowerCase() !== profileId.toLowerCase())
     return { error: true, message: 'You can only publish on your own page.' };
   const parsed = fields(formData, noteSchema);
   if (!parsed.success)

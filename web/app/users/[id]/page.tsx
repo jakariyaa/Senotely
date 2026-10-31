@@ -45,7 +45,9 @@ export default async function ProfilePage({
         </h1>
       </header>
 
-      {currentUser?.id === id && <ProfilePostForm profileId={id} />}
+      {currentUser?.id.toLowerCase() === id.toLowerCase() && (
+        <ProfilePostForm profileId={id} />
+      )}
 
       <section className="space-y-4" aria-labelledby="posts-heading">
         <h2 id="posts-heading" className="text-xl font-semibold">

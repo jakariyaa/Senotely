@@ -237,8 +237,8 @@ class MemoryPosts implements PostRepository {
     const now = new Date().toISOString();
     const post = {
       id: makeId(++this.sequence),
-      author,
       ...input,
+      author,
       createdAt: now,
       updatedAt: now,
     };
@@ -351,6 +351,19 @@ async function createAdmin() {
 }
 
 describe('API authentication, authorization, ownership, and pagination', () => {
+  it('returns 413 when a JSON request exceeds the body limit', async () => {
+    const response = await request('/auth/register', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ data: 'a'.repeat(100 * 1024) }),
+    });
+
+    expect(response.status).toBe(413);
+    expect(await response.json()).toMatchObject({
+      error: { code: 'PAYLOAD_TOO_LARGE', message: 'Request body too large' },
+    });
+  });
+
   it('forces public registration to user and keeps login failures indistinguishable', async () => {
     const registered = await jsonRequest('/auth/register', {
       name: 'Casey',
@@ -685,14 +698,17 @@ describe('API authentication, authorization, ownership, and pagination', () => {
 
   it('protects admin self-actions, handles conflicts, and cascades user deletion', async () => {
     const admin = await createAdmin();
+    admin.id = 'abcdef012345abcdef012345';
+    users.records[0]!.id = admin.id;
     const adminToken = tokens.sign(admin.id);
+    const uppercaseId = admin.id.toUpperCase();
     const selfRole = await jsonRequest(
-      `/users/${admin.id}`,
+      `/users/${uppercaseId}`,
       { role: 'user' },
       adminToken,
       'PATCH',
     );
-    const selfDelete = await request(`/users/${admin.id}`, {
+    const selfDelete = await request(`/users/${uppercaseId}`, {
       method: 'DELETE',
       headers: { authorization: `Bearer ${adminToken}` },
     });
@@ -797,12 +813,16 @@ describe('API authentication, authorization, ownership, and pagination', () => {
     const second = await register('author-two@test.example', 'Author Two');
     await jsonRequest(
       '/posts',
-      { title: 'First author', content: 'Public post' },
+      {
+        title: 'First author',
+        content: 'Public post',
+        author: second.body.user.id,
+      },
       first.body.token,
     );
     await jsonRequest(
       '/posts',
-      { title: 'Second author', content: 'Private to the feed' },
+      { title: 'Second author', content: 'Another public post' },
       second.body.token,
     );
     const feed = await request(`/users/${first.body.user.id}/posts`);
@@ -814,6 +834,12 @@ describe('API authentication, authorization, ownership, and pagination', () => {
     expect(
       result.data.posts.map((post: { title: string }) => post.title),
     ).toEqual(['First author']);
+    const secondFeed = await request(`/users/${second.body.user.id}/posts`);
+    expect(
+      (await secondFeed.json()).data.posts.map(
+        (post: { title: string }) => post.title,
+      ),
+    ).toEqual(['Second author']);
     expect(result.data.user).not.toHaveProperty('email');
     expect(result.data.user).not.toHaveProperty('passwordHash');
     expect(

@@ -34,7 +34,7 @@ export class MongoosePostRepository implements PostRepository {
     author: string,
     input: { title: string; content: string },
   ): Promise<PostData> {
-    const post = await PostModel.create({ author, ...input });
+    const post = await PostModel.create({ ...input, author });
     return toPostData(
       post as unknown as AuthorPostsAggregation['posts'][number],
     );

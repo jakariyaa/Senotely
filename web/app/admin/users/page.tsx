@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { api, requireToken, requireUser } from '@/lib/api';
 import type { Page, User } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,11 +16,33 @@ function pageNumber(value?: string) {
   return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : 1;
 }
 
-export default async function AdminUsersPage({
+export default function AdminUsersPage({
   searchParams,
 }: {
   searchParams: Search;
 }) {
+  return (
+    <div className="space-y-8">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-semibold tracking-tight">Users</h1>
+        <p className="text-muted-foreground">
+          Manage accounts, roles, and interests.
+        </p>
+      </header>
+      <Suspense
+        fallback={
+          <p className="py-8 text-center text-sm text-muted-foreground" role="status">
+            Loading users…
+          </p>
+        }
+      >
+        <AdminUsersContent searchParams={searchParams} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function AdminUsersContent({ searchParams }: { searchParams: Search }) {
   const page = pageNumber((await searchParams).page);
   const [token, currentUser] = await Promise.all([
     requireToken(),
@@ -32,12 +55,6 @@ export default async function AdminUsersPage({
 
   return (
     <div className="space-y-8">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight">Users</h1>
-        <p className="text-muted-foreground">
-          Manage accounts, roles, and interests.
-        </p>
-      </header>
       <Card>
         <CardHeader>
           <CardTitle>Create a user</CardTitle>

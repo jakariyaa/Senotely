@@ -20,6 +20,9 @@ export default function ProfilePostForm({ profileId }: { profileId: string }) {
     <Card>
       <CardHeader>
         <CardTitle>Write a post</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Posts are public and visible to anyone who visits this profile.
+        </p>
       </CardHeader>
       <CardContent>
         <form action={action} className="space-y-4">

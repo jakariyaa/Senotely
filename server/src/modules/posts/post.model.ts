@@ -26,6 +26,6 @@ const postSchema = new Schema<Post>(
   },
 );
 
-postSchema.index({ author: 1, _id: -1 });
+postSchema.index({ author: 1, _id: -1 }); // C: Q11, Q12
 
 export const PostModel = model<Post>('Post', postSchema);

@@ -49,7 +49,10 @@ export class UserService {
   }
 
   async update(actorId: string, id: string, input: UpdateManagedUserInput) {
-    if (actorId === id && input.role !== undefined) {
+    if (
+      actorId.toLowerCase() === id.toLowerCase() &&
+      input.role !== undefined
+    ) {
       throw new ForbiddenError('You cannot change your own role');
     }
 
@@ -65,7 +68,7 @@ export class UserService {
   }
 
   async delete(actorId: string, id: string): Promise<void> {
-    if (actorId === id) {
+    if (actorId.toLowerCase() === id.toLowerCase()) {
       throw new ForbiddenError('You cannot delete your own account');
     }
     if (!(await this.users.findPublicById(id))) {

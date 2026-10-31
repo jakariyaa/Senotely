@@ -26,6 +26,6 @@ const noteSchema = new Schema<Note>(
   },
 );
 
-noteSchema.index({ owner: 1, _id: -1 });
+noteSchema.index({ owner: 1, _id: -1 }); // B: Q5, Q7, Q9, Q10
 
 export const NoteModel = model<Note>('Note', noteSchema);

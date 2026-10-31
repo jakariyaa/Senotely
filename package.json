@@ -1,19 +1,21 @@
 {
-  "name": "secure-notes-platform",
+  "name": "senotely",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@12.14.0",
   "scripts": {
-    "dev": "pnpm --filter @notes/server dev",
-    "dev:web": "pnpm --filter @notes/web dev",
-    "build": "pnpm --filter @notes/server build && pnpm --filter @notes/web build",
-    "lint": "eslint server && pnpm --filter @notes/web lint",
+    "dev": "pnpm --recursive --parallel --filter @senotely/server --filter @senotely/web dev",
+    "dev:full": "docker compose up -d && pnpm dev",
+    "dev:web": "pnpm --filter @senotely/web dev",
+    "dev:server": "pnpm --filter @senotely/server dev",
+    "build": "pnpm --filter @senotely/server build && pnpm --filter @senotely/web build",
+    "lint": "eslint server && pnpm --filter @senotely/web lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "pnpm --filter @notes/server typecheck && pnpm --filter @notes/web exec tsc --noEmit",
-    "test": "pnpm --filter @notes/server test",
-    "seed": "pnpm --filter @notes/server seed",
-    "explain": "pnpm --filter @notes/server explain"
+    "typecheck": "pnpm --filter @senotely/server typecheck && pnpm --filter @senotely/web exec tsc --noEmit",
+    "test": "pnpm --filter @senotely/server test",
+    "seed": "pnpm --filter @senotely/server seed",
+    "explain": "pnpm --filter @senotely/server explain"
   },
   "devDependencies": {
     "eslint": "^9.39.0",

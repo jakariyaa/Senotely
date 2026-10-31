@@ -17,10 +17,19 @@ export const errorHandler: ErrorRequestHandler = (
         ? error
         : typeof error === 'object' &&
             error !== null &&
-            'status' in error &&
-            error.status === 400
-          ? new AppError('Invalid request', 400, 'BAD_REQUEST')
-          : new AppError('Internal server error', 500, 'INTERNAL_SERVER_ERROR');
+            'type' in error &&
+            error.type === 'entity.too.large'
+          ? new AppError('Request body too large', 413, 'PAYLOAD_TOO_LARGE')
+          : typeof error === 'object' &&
+              error !== null &&
+              'status' in error &&
+              error.status === 400
+            ? new AppError('Invalid request', 400, 'BAD_REQUEST')
+            : new AppError(
+                'Internal server error',
+                500,
+                'INTERNAL_SERVER_ERROR',
+              );
 
   response.status(normalized.status).json({
     error: {

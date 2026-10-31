@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Margin Notes',
+  title: 'Senotely',
   description: 'A quiet place for your notes and ideas.',
 };
 

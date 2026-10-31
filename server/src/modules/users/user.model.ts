@@ -36,7 +36,7 @@ const userSchema = new Schema<User>(
   },
 );
 
-userSchema.index({ email: 1 }, { unique: true });
-userSchema.index({ interests: 1 });
+userSchema.index({ email: 1 }, { unique: true }); // A: Q1, Q2
+userSchema.index({ interests: 1 }); // D: Q13
 
 export const UserModel = model<User>('User', userSchema);
