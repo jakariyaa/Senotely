@@ -2,11 +2,15 @@ import { createServer } from 'node:http';
 import { createApp } from './app.js';
 import { connectDatabase, disconnectDatabase } from './config/db.js';
 import { env } from './config/env.js';
+import { NoteModel } from './modules/notes/note.model.js';
+import { PostModel } from './modules/posts/post.model.js';
+import { UserModel } from './modules/users/user.model.js';
 
 const server = createServer(createApp());
 
 try {
   await connectDatabase();
+  await Promise.all([UserModel.init(), NoteModel.init(), PostModel.init()]);
   server.listen(env.PORT, () => {
     console.info(`API listening on port ${env.PORT}`);
   });
