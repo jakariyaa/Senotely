@@ -50,7 +50,7 @@ export class MongooseNoteRepository implements NoteRepository {
     const note = await NoteModel.findOneAndUpdate(
       { _id: id, owner },
       { $set: input },
-      { new: true, runValidators: true, projection },
+      { returnDocument: 'after', runValidators: true, projection },
     ).lean();
     return note ? toNoteData(note as unknown as StoredNote) : null;
   }
@@ -58,6 +58,10 @@ export class MongooseNoteRepository implements NoteRepository {
   async deleteOwn(id: string, owner: string): Promise<boolean> {
     const result = await NoteModel.deleteOne({ _id: id, owner });
     return result.deletedCount === 1;
+  }
+
+  async deleteByOwner(owner: string): Promise<void> {
+    await NoteModel.deleteMany({ owner });
   }
 
   async listByOwner(

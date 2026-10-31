@@ -25,7 +25,12 @@ export function createApp(container: Container) {
   app.use('/auth', authRateLimit, authRoutes(container.authService));
   app.use(
     '/users',
-    userRoutes(container.authService, container.tokens, container.users),
+    userRoutes(
+      container.authService,
+      container.tokens,
+      container.users,
+      container.userService,
+    ),
   );
   app.use(
     '/notes',

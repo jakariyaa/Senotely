@@ -1,23 +1,15 @@
 import { z } from 'zod';
-
-const password = z
-  .string()
-  .min(8)
-  .max(72)
-  .refine(
-    (value) => Buffer.byteLength(value, 'utf8') <= 72,
-    'must be at most 72 bytes',
-  );
+import { passwordSchema } from '../../shared/security/password.schema.js';
 
 export const registerSchema = z.object({
   name: z.string().trim().min(1).max(100),
   email: z.email().trim().toLowerCase(),
-  password,
+  password: passwordSchema,
 });
 
 export const loginSchema = z.object({
   email: z.email().trim().toLowerCase(),
-  password,
+  password: passwordSchema,
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

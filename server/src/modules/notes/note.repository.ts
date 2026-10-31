@@ -21,6 +21,7 @@ export interface NoteRepository {
     input: Partial<NoteInput>,
   ): Promise<NoteData | null>;
   deleteOwn(id: string, owner: string): Promise<boolean>;
+  deleteByOwner(owner: string): Promise<void>;
   listByOwner(
     owner: string,
     pagination: Pagination,
