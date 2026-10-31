@@ -8,7 +8,9 @@
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "verify-indexes": "node --env-file=.env --import tsx scripts/verify-indexes.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "seed": "node --env-file=.env --import tsx scripts/seed.ts",
+    "explain": "node --env-file=.env --import tsx scripts/explain.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

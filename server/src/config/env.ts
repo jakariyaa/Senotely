@@ -9,6 +9,13 @@ const envSchema = z.object({
   WEB_ORIGIN: z.url({ protocol: /^https?$/ }).default('http://localhost:3000'),
   JWT_SECRET: z.string().min(32, 'must contain at least 32 characters'),
   JWT_EXPIRES_IN: z.string().default('1h'),
+  SEED_ADMIN_EMAIL: z.email().optional(),
+  SEED_ADMIN_PASSWORD: z
+    .string()
+    .min(8)
+    .max(72)
+    .refine((value) => Buffer.byteLength(value, 'utf8') <= 72)
+    .optional(),
   MONGOOSE_AUTO_INDEX: z
     .enum(['true', 'false'])
     .default('true')
