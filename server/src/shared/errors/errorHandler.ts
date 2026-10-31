@@ -1,4 +1,5 @@
 import type { ErrorRequestHandler } from 'express';
+import { AppError, ConflictError } from './AppError.js';
 
 export const errorHandler: ErrorRequestHandler = (
   error,
@@ -6,18 +7,28 @@ export const errorHandler: ErrorRequestHandler = (
   response,
   _next,
 ) => {
-  const status =
+  const normalized =
     typeof error === 'object' &&
     error !== null &&
-    'status' in error &&
-    typeof error.status === 'number'
-      ? error.status
-      : 500;
+    'code' in error &&
+    error.code === 11000
+      ? new ConflictError('Email already exists')
+      : error instanceof AppError
+        ? error
+        : typeof error === 'object' &&
+            error !== null &&
+            'status' in error &&
+            error.status === 400
+          ? new AppError('Invalid request', 400, 'BAD_REQUEST')
+          : new AppError('Internal server error', 500, 'INTERNAL_SERVER_ERROR');
 
-  response.status(status).json({
+  response.status(normalized.status).json({
     error: {
-      code: status === 500 ? 'INTERNAL_SERVER_ERROR' : 'REQUEST_ERROR',
-      message: status === 500 ? 'Internal server error' : 'Request failed',
+      code: normalized.code,
+      message: normalized.message,
+      ...(normalized.details === undefined
+        ? {}
+        : { details: normalized.details }),
     },
   });
 };

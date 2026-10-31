@@ -1,6 +1,14 @@
-import { model, Schema, type InferSchemaType } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
-const userSchema = new Schema(
+export type User = {
+  name: string;
+  email: string;
+  passwordHash: string;
+  role: 'user' | 'admin';
+  interests: string[];
+};
+
+const userSchema = new Schema<User>(
   {
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true, lowercase: true },
@@ -31,5 +39,4 @@ const userSchema = new Schema(
 userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ interests: 1 });
 
-export type User = InferSchemaType<typeof userSchema>;
-export const UserModel = model('User', userSchema);
+export const UserModel = model<User>('User', userSchema);

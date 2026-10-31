@@ -1,12 +1,13 @@
 import { createServer } from 'node:http';
 import { createApp } from './app.js';
 import { connectDatabase, disconnectDatabase } from './config/db.js';
+import { container } from './container.js';
 import { env } from './config/env.js';
 import { NoteModel } from './modules/notes/note.model.js';
 import { PostModel } from './modules/posts/post.model.js';
 import { UserModel } from './modules/users/user.model.js';
 
-const server = createServer(createApp());
+const server = createServer(createApp(container));
 
 try {
   await connectDatabase();

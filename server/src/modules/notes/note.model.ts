@@ -1,6 +1,12 @@
-import { model, Schema, type InferSchemaType } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
 
-const noteSchema = new Schema(
+export type Note = {
+  owner: Types.ObjectId;
+  title: string;
+  content: string;
+};
+
+const noteSchema = new Schema<Note>(
   {
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     title: { type: String, required: true, maxlength: 200 },
@@ -22,5 +28,4 @@ const noteSchema = new Schema(
 
 noteSchema.index({ owner: 1, _id: -1 });
 
-export type Note = InferSchemaType<typeof noteSchema>;
-export const NoteModel = model('Note', noteSchema);
+export const NoteModel = model<Note>('Note', noteSchema);

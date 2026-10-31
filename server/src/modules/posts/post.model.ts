@@ -1,6 +1,12 @@
-import { model, Schema, type InferSchemaType } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
 
-const postSchema = new Schema(
+export type Post = {
+  author: Types.ObjectId;
+  title: string;
+  content: string;
+};
+
+const postSchema = new Schema<Post>(
   {
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     title: { type: String, required: true, maxlength: 200 },
@@ -22,5 +28,4 @@ const postSchema = new Schema(
 
 postSchema.index({ author: 1, _id: -1 });
 
-export type Post = InferSchemaType<typeof postSchema>;
-export const PostModel = model('Post', postSchema);
+export const PostModel = model<Post>('Post', postSchema);
