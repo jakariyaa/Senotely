@@ -16,7 +16,7 @@ export function createApp(container: Container) {
   const app = express();
 
   app.disable('x-powered-by');
-  app.use(helmet());
+  app.use((helmet as unknown as typeof import('helmet').default)());
   app.use(cors({ origin: env.WEB_ORIGIN }));
   app.use(pinoHttp({ logger }));
   app.use(express.json({ limit: '100kb' }));
