@@ -15,6 +15,7 @@
     "typecheck": "pnpm --filter @senotely/server typecheck && pnpm --filter @senotely/web exec tsc --noEmit",
     "test": "pnpm --filter @senotely/server test",
     "seed": "pnpm --filter @senotely/server seed",
+    "seed:admin": "pnpm --filter @senotely/server seed:admin",
     "explain": "pnpm --filter @senotely/server explain"
   },
   "devDependencies": {

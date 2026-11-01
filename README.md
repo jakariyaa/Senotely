@@ -8,7 +8,7 @@ Senotely is a notes and social-posts app with user accounts, personal notes, pub
 
 - Node.js 24 or newer
 - pnpm 12
-- Docker Compose, or a MongoDB 9.0+ instance (Compose runs MongoDB 9.0.4)
+- Docker Compose, or a MongoDB 8.0+ instance (Compose runs MongoDB 9.0.4)
 
 ### Setup
 
@@ -29,13 +29,14 @@ Senotely is a notes and social-posts app with user accounts, personal notes, pub
 
    `pnpm dev:full` starts MongoDB with Docker Compose and launches the API and web app. If MongoDB is already running, use `pnpm dev` instead. For a separately managed local MongoDB, configure `MONGODB_URI` accordingly.
 
-4. In another terminal, wait for MongoDB to be ready, then seed the development data:
+4. In another terminal, wait for MongoDB to be ready, then seed the admin and development data:
 
    ```sh
+   pnpm seed:admin
    pnpm seed
    ```
 
-   **Development data only:** seeding replaces generated `seed-user-*` records and their notes/posts, then upserts the configured seed admin. Do not run it against data you need to preserve. The seed admin uses the configured credentials.
+   `pnpm seed:admin` upserts the admin using the configured credentials. **Development data only:** `pnpm seed` replaces generated `seed-user-*` records and their notes/posts. Do not run it against data you need to preserve.
 
 The web app is at <http://localhost:3000>; the API is at <http://localhost:3001>. MongoDB is exposed on host port `27018` to avoid the default local MongoDB port. `GET /health` returns `{ "status": "ok" }`.
 
@@ -50,15 +51,16 @@ The web app's `API_BASE_URL` defaults to `http://127.0.0.1:3001`. The server's e
 
 ## Common commands
 
-| Command          | Purpose                                                       |
-| ---------------- | ------------------------------------------------------------- |
-| `pnpm dev:full`  | Start MongoDB with Compose and run both apps.                 |
-| `pnpm dev`       | Run both apps; MongoDB must be started separately.            |
-| `pnpm seed`      | Replace generated development data and upsert the seed admin. |
-| `pnpm build`     | Build the server and web app.                                 |
-| `pnpm lint`      | Lint both workspace packages.                                 |
-| `pnpm typecheck` | Type-check both workspace packages.                           |
-| `pnpm test`      | Run server tests.                                             |
+| Command           | Purpose                                                 |
+| ----------------- | ------------------------------------------------------- |
+| `pnpm dev:full`   | Start MongoDB with Compose and run both apps.           |
+| `pnpm dev`        | Run both apps; MongoDB must be started separately.      |
+| `pnpm seed:admin` | Upsert the seed admin using the configured credentials. |
+| `pnpm seed`       | Replace generated development data.                     |
+| `pnpm build`      | Build the server and web app.                           |
+| `pnpm lint`       | Lint both workspace packages.                           |
+| `pnpm typecheck`  | Type-check both workspace packages.                     |
+| `pnpm test`       | Run server tests.                                       |
 
 ## API overview
 

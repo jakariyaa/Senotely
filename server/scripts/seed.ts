@@ -4,7 +4,6 @@ import {
   connectDatabase,
   disconnectDatabase,
 } from '../src/config/db.js';
-import { env } from '../src/config/env.js';
 import { NoteModel } from '../src/modules/notes/note.model.js';
 import { PostModel } from '../src/modules/posts/post.model.js';
 import { UserModel } from '../src/modules/users/user.model.js';
@@ -58,12 +57,6 @@ function sampleInterests(): string[] {
 }
 
 try {
-  if (!env.SEED_ADMIN_EMAIL || !env.SEED_ADMIN_PASSWORD) {
-    throw new Error(
-      'SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD are required to seed',
-    );
-  }
-
   await connectDatabase();
   await assertMongoVersion();
   await Promise.all([UserModel.init(), NoteModel.init(), PostModel.init()]);
@@ -82,20 +75,6 @@ try {
 
   const hasher = new BcryptHasher();
   const seedUserHash = await hasher.hash(randomBytes(32).toString('base64url'));
-  const adminPasswordHash = await hasher.hash(env.SEED_ADMIN_PASSWORD);
-  await UserModel.updateOne(
-    { email: env.SEED_ADMIN_EMAIL },
-    {
-      $set: {
-        name: 'Seed Admin',
-        email: env.SEED_ADMIN_EMAIL,
-        passwordHash: adminPasswordHash,
-        role: 'admin',
-      },
-      $setOnInsert: { interests: [] },
-    },
-    { upsert: true, runValidators: true },
-  );
 
   const users = await UserModel.insertMany(
     Array.from({ length: userCount }, (_, index) => ({
@@ -145,7 +124,7 @@ try {
   }
 
   console.info(
-    `Seeded 1 admin, ${userCount} users, ${noteCount} notes, and ${postCount} posts; heavy user ${heavyUserId}`,
+    `Seeded ${userCount} users, ${noteCount} notes, and ${postCount} posts; heavy user ${heavyUserId}`,
   );
 } catch (error) {
   console.error(error);

@@ -13,8 +13,8 @@ export async function assertMongoVersion(): Promise<void> {
   if (!database) throw new Error('MongoDB connection is not ready');
 
   const { version, versionArray } = await database.admin().buildInfo();
-  if (!versionArray[0] || versionArray[0] < 9) {
-    throw new Error(`MongoDB 9.0+ is required; connected server is ${version}`);
+  if (!versionArray[0] || versionArray[0] < 8) {
+    throw new Error(`MongoDB 8.0+ is required; connected server is ${version}`);
   }
 }
 

@@ -10,6 +10,7 @@
     "verify-indexes": "node --env-file=.env --import tsx scripts/verify-indexes.ts",
     "test": "vitest run",
     "seed": "node --env-file=.env --import tsx scripts/seed.ts",
+    "seed:admin": "node --env-file=.env --import tsx scripts/seed-admin.ts",
     "explain": "node --env-file=.env --import tsx scripts/explain.ts"
   },
   "dependencies": {
