@@ -32,7 +32,7 @@ const [
   { JwtTokenService },
   { BcryptHasher },
 ] = await Promise.all([
-  import('../src/app.js'),
+  import('../src/createApp.js'),
   import('../src/modules/auth/auth.service.js'),
   import('../src/modules/notes/note.service.js'),
   import('../src/modules/users/user.service.js'),

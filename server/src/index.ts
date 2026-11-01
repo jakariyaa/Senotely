@@ -1,5 +1,5 @@
 import express from 'express';
-import { createApp } from './app.js';
+import { createApp } from './createApp.js';
 import { assertMongoVersion, connectDatabase } from './config/db.js';
 import { container } from './container.js';
 import { NoteModel } from './modules/notes/note.model.js';
